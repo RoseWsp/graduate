@@ -4,16 +4,19 @@ import (
 	"graduate/app/album/service/conf"
 
 	"github.com/go-kratos/kratos/v2/log"
+	"github.com/google/wire"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
+
+var ProviderSet = wire.NewSet(NewDB, NewData, NewAlbumRepo)
 
 type Data struct {
 	db  *gorm.DB
 	log *log.Helper
 }
 
-func newDB(conf *conf.Data, logger log.Logger) *gorm.BD {
+func NewDB(conf *conf.Data, logger log.Logger) *gorm.BD {
 	log := log.NewHelper(log.With(logger, "module", "album-service/data/gorm"))
 	db, err := gorm.Open(mysql.Open(conf.Database.Source), &gorm.Config{})
 	if err != nil {

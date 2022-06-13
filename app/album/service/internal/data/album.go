@@ -28,6 +28,13 @@ type Album struct {
 	CreateAt time.Time
 }
 
+func NewAlbumRepo(data *Data, logger log.Logger) biz.AlbumRepo {
+	return &albumRepo{
+		data: data,
+		log:  log.NewHelper(log.With(logger, "module", "data/album")),
+	}
+}
+
 func (r *albumRepo) ListAlbum(ctx context.Context, pageNum, pageSize int64) (biz.ListAlbum, error) {
 	var as []Album
 	result := r.data.db.WithContext(ctx).
