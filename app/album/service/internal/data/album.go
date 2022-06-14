@@ -54,8 +54,8 @@ func (r *albumRepo) ListAlbum(ctx context.Context, pageNum, pageSize int64) (biz
 			CreateAt: o.CreateAt,
 		})
 	}
-
-	cnt := r.data.db.WithContext(ctx).Count(0)
+	var cnt int64
+	r.data.db.WithContext(ctx).Model(&Album{}).Count(&cnt)
 	return biz.ListAlbum{
 		Albums: rv,
 		Count:  cnt,

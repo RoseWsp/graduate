@@ -30,6 +30,6 @@ func NewGRPCServer(c *conf.Server, logger log.Logger, s *service.AlbumService) *
 		opts = append(opts, grpc.Timeout(c.Grpc.Timeout.AsDuration()))
 	}
 	srv := grpc.NewServer(opts...)
-	v1.RegisterOrderServer(srv, s)
+	v1.RegisterAlbumServer(srv, s)
 	return srv
 }

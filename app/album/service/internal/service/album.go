@@ -11,7 +11,7 @@ import (
 )
 
 type AlbumService struct {
-	v1.UnimplementedOrderServer
+	v1.UnimplementedAlbumServer
 
 	ac  *biz.AlbumUseCase
 	log *log.Helper
@@ -37,7 +37,7 @@ func (s *AlbumService) ListAlbum(ctx context.Context, req *v1.ListAlbumReq) (*v1
 			Title:    r.Title,
 			Artist:   r.Artist,
 			Price:    r.Price,
-			CreateAt: time.Unix(r.CreateAt, 0).Format("2006-01-02 15:04:05"),
+			CreateAt: time.Unix(r.CreateAt.Unix(), 0).Format("2006-01-02 15:04:05"),
 		})
 	}
 	return &v1.ListAlbumReply{

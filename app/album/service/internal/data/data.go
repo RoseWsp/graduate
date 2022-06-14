@@ -1,7 +1,7 @@
 package data
 
 import (
-	"graduate/app/album/service/conf"
+	"graduate/app/album/service/internal/conf"
 
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/google/wire"
@@ -9,14 +9,15 @@ import (
 	"gorm.io/gorm"
 )
 
-var ProviderSet = wire.NewSet(NewDB, NewData, NewAlbumRepo)
+// ProviderSet is data providers.
+var ProviderSet = wire.NewSet(NewData, NewDB, NewAlbumRepo)
 
 type Data struct {
 	db  *gorm.DB
 	log *log.Helper
 }
 
-func NewDB(conf *conf.Data, logger log.Logger) *gorm.BD {
+func NewDB(conf *conf.Data, logger log.Logger) *gorm.DB {
 	log := log.NewHelper(log.With(logger, "module", "album-service/data/gorm"))
 	db, err := gorm.Open(mysql.Open(conf.Database.Source), &gorm.Config{})
 	if err != nil {
@@ -30,7 +31,7 @@ func NewDB(conf *conf.Data, logger log.Logger) *gorm.BD {
 
 // NewData .
 func NewData(db *gorm.DB, logger log.Logger) (*Data, func(), error) {
-	log := log.NewHelper(log.With(logger, "module", "order-service/data"))
+	log := log.NewHelper(log.With(logger, "module", "album-service/data"))
 
 	d := &Data{
 		db:  db,
