@@ -19,7 +19,8 @@ import (
 
 func initApp(confData *conf.Data, confServer *conf.Server, logger log.Logger) (*kratos.App, func(), error) {
 	db := data.NewDB(confData, logger)
-	dataData, cleanup, err := data.NewData(db, logger)
+	client := data.NewRedis(confData)
+	dataData, cleanup, err := data.NewData(db, client, logger)
 	if err != nil {
 		return nil, nil, err
 	}

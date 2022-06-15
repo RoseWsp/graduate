@@ -23,6 +23,7 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type AlbumClient interface {
 	ListAlbum(ctx context.Context, in *ListAlbumReq, opts ...grpc.CallOption) (*ListAlbumReply, error)
+	GetAlbumById(ctx context.Context, in *GetAlbumByIdReq, opts ...grpc.CallOption) (*GetAlbumByIdReply, error)
 }
 
 type albumClient struct {
@@ -42,11 +43,21 @@ func (c *albumClient) ListAlbum(ctx context.Context, in *ListAlbumReq, opts ...g
 	return out, nil
 }
 
+func (c *albumClient) GetAlbumById(ctx context.Context, in *GetAlbumByIdReq, opts ...grpc.CallOption) (*GetAlbumByIdReply, error) {
+	out := new(GetAlbumByIdReply)
+	err := c.cc.Invoke(ctx, "/Album/GetAlbumById", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AlbumServer is the server API for Album service.
 // All implementations must embed UnimplementedAlbumServer
 // for forward compatibility
 type AlbumServer interface {
 	ListAlbum(context.Context, *ListAlbumReq) (*ListAlbumReply, error)
+	GetAlbumById(context.Context, *GetAlbumByIdReq) (*GetAlbumByIdReply, error)
 	mustEmbedUnimplementedAlbumServer()
 }
 
@@ -56,6 +67,9 @@ type UnimplementedAlbumServer struct {
 
 func (UnimplementedAlbumServer) ListAlbum(context.Context, *ListAlbumReq) (*ListAlbumReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListAlbum not implemented")
+}
+func (UnimplementedAlbumServer) GetAlbumById(context.Context, *GetAlbumByIdReq) (*GetAlbumByIdReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAlbumById not implemented")
 }
 func (UnimplementedAlbumServer) mustEmbedUnimplementedAlbumServer() {}
 
@@ -88,6 +102,24 @@ func _Album_ListAlbum_Handler(srv interface{}, ctx context.Context, dec func(int
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Album_GetAlbumById_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetAlbumByIdReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AlbumServer).GetAlbumById(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/Album/GetAlbumById",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AlbumServer).GetAlbumById(ctx, req.(*GetAlbumByIdReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Album_ServiceDesc is the grpc.ServiceDesc for Album service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -98,6 +130,10 @@ var Album_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListAlbum",
 			Handler:    _Album_ListAlbum_Handler,
+		},
+		{
+			MethodName: "GetAlbumById",
+			Handler:    _Album_GetAlbumById_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

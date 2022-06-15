@@ -45,3 +45,20 @@ func (s *AlbumService) ListAlbum(ctx context.Context, req *v1.ListAlbumReq) (*v1
 		Albums: albums,
 	}, nil
 }
+
+func (s *AlbumService) GetAlbumById(ctx context.Context, req *v1.GetAlbumByIdReq) (*v1.GetAlbumByIdReply, error) {
+	rv, err := s.ac.GetAlbumById(ctx, req.Id)
+	if err != nil {
+		return nil, err
+	}
+	album := &v1.GetAlbumByIdReply{
+		Album: &v1.GetAlbumByIdReply_Album{
+			Id:       rv.Id,
+			Title:    rv.Title,
+			Artist:   rv.Artist,
+			Price:    rv.Price,
+			CreateAt: time.Unix(rv.CreateAt.Unix(), 0).Format("2006-01-02 15:04:05"),
+		},
+	}
+	return album, nil
+}

@@ -31,15 +31,22 @@ func main() {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
 
-	in := &pb.ListAlbumReq{PageNum: 1, PageSize: 10}
-	r, err := c.ListAlbum(ctx, in)
-	if err != nil {
-		log.Fatalf("could not ListAlbum: %v", err)
-	}
+	// in := &pb.ListAlbumReq{PageNum: 1, PageSize: 10}
+	// r, err := c.ListAlbum(ctx, in)
+	// if err != nil {
+	// 	log.Fatalf("could not ListAlbum: %v", err)
+	// }
 
-	fmt.Println("count:", r.Count)
-	for _, o := range r.Albums {
-		fmt.Printf("Id:%d,Title:%s,Artist:%s,CreateAt:%s\r\n", o.Id, o.Title, o.Artist, o.CreateAt)
+	// fmt.Println("count:", r.Count)
+	// for _, o := range r.Albums {
+	// 	fmt.Printf("Id:%d,Title:%s,Artist:%s,CreateAt:%s\r\n", o.Id, o.Title, o.Artist, o.CreateAt)
+	// }
+
+	in := &pb.GetAlbumByIdReq{Id: 1}
+	o, err := c.GetAlbumById(ctx, in)
+	if err != nil {
+		log.Fatalf("could not GetAlbumByIdReq: %v", err)
 	}
+	fmt.Printf("Id:%d,Title:%s,Artist:%s,CreateAt:%s\r\n", o.Album.Id, o.Album.Title, o.Album.Artist, o.Album.CreateAt)
 
 }

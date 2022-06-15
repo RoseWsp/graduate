@@ -4,16 +4,19 @@ import (
 	"graduate/app/album/service/internal/conf"
 
 	"github.com/go-kratos/kratos/v2/log"
+
+	"github.com/go-redis/redis/v8"
 	"github.com/google/wire"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
 
 // ProviderSet is data providers.
-var ProviderSet = wire.NewSet(NewData, NewDB, NewAlbumRepo)
+var ProviderSet = wire.NewSet(NewData, NewDB, NewRedis, NewAlbumRepo)
 
 type Data struct {
 	db  *gorm.DB
+	rdb *redis.Client
 	log *log.Helper
 }
 
@@ -26,15 +29,26 @@ func NewDB(conf *conf.Data, logger log.Logger) *gorm.DB {
 	if err := db.AutoMigrate(&Album{}); err != nil {
 		log.Fatal(err)
 	}
+
 	return db
 }
 
+func NewRedis(conf *conf.Data) *redis.Client {
+	rdb := redis.NewClient(&redis.Options{
+		Addr:     conf.Redis.Addr,
+		Password: "", // no password set
+		DB:       0,  // use default DB
+	})
+	return rdb
+}
+
 // NewData .
-func NewData(db *gorm.DB, logger log.Logger) (*Data, func(), error) {
+func NewData(db *gorm.DB, rdb *redis.Client, logger log.Logger) (*Data, func(), error) {
 	log := log.NewHelper(log.With(logger, "module", "album-service/data"))
 
 	d := &Data{
 		db:  db,
+		rdb: rdb,
 		log: log,
 	}
 	return d, func() {

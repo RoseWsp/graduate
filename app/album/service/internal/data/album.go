@@ -2,11 +2,15 @@ package data
 
 import (
 	"context"
+	"encoding/json"
 	"graduate/app/album/service/internal/biz"
 	"graduate/pkg/util/pagination"
+	"strconv"
 	"time"
 
 	"github.com/go-kratos/kratos/v2/log"
+	"github.com/go-redis/redis/v8"
+
 	"gorm.io/gorm"
 )
 
@@ -32,6 +36,59 @@ func NewAlbumRepo(data *Data, logger log.Logger) biz.AlbumRepo {
 	return &albumRepo{
 		data: data,
 		log:  log.NewHelper(log.With(logger, "module", "data/album")),
+	}
+}
+
+func (r *albumRepo) GetAlbumById(ctx context.Context, id int64) (*biz.Album, error) {
+	var album *biz.Album
+	rAlbum, err := r.getAlbumFromRedis(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+	album = rAlbum
+	if album != nil {
+		return album, nil
+	}
+	album, err = r.getAlbumFromDB(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+	return album, nil
+}
+
+func (r *albumRepo) getAlbumFromDB(ctx context.Context, id int64) (*biz.Album, error) {
+	a := Album{}
+	result := r.data.db.WithContext(ctx).First(&a, id)
+	return &biz.Album{
+		Id:       a.Id,
+		Title:    a.Title,
+		Artist:   a.Artist,
+		Price:    a.Price,
+		CreateAt: a.CreateAt,
+	}, result.Error
+}
+
+func (r *albumRepo) getAlbumFromRedis(ctx context.Context, id int64) (*biz.Album, error) {
+	key := "getAlbumFromRedis" + strconv.Itoa((int)(id))
+	val, err := r.data.rdb.Get(ctx, key).Result()
+	if err == redis.Nil {
+		return nil, nil
+	}
+	if err != nil {
+		return nil, err
+	}
+	var rst biz.Album
+	json.Unmarshal([]byte(val), &rst)
+	return &rst, nil
+}
+
+func (r *albumRepo) setAlbumToRedis(ctx context.Context, album *biz.Album) error {
+	if val, err := json.Marshal(album); err != nil {
+		return err
+	} else {
+		key := "getAlbumFromRedis" + strconv.Itoa((int)(album.Id))
+		err = r.data.rdb.Set(ctx, key, string(val), 2*time.Hour).Err()
+		return err
 	}
 }
 
