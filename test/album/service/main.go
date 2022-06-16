@@ -41,12 +41,13 @@ func main() {
 	// for _, o := range r.Albums {
 	// 	fmt.Printf("Id:%d,Title:%s,Artist:%s,CreateAt:%s\r\n", o.Id, o.Title, o.Artist, o.CreateAt)
 	// }
-
+	start := time.Now()
 	in := &pb.GetAlbumByIdReq{Id: 1}
 	o, err := c.GetAlbumById(ctx, in)
 	if err != nil {
 		log.Fatalf("could not GetAlbumByIdReq: %v", err)
 	}
 	fmt.Printf("Id:%d,Title:%s,Artist:%s,CreateAt:%s\r\n", o.Album.Id, o.Album.Title, o.Album.Artist, o.Album.CreateAt)
-
+	elapse := time.Since(start)
+	fmt.Println("elapsed time is :", elapse)
 }

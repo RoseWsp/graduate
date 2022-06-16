@@ -53,6 +53,10 @@ func (r *albumRepo) GetAlbumById(ctx context.Context, id int64) (*biz.Album, err
 	if err != nil {
 		return nil, err
 	}
+	err = r.setAlbumToRedis(ctx, album)
+	if err != nil {
+		return nil, err
+	}
 	return album, nil
 }
 
