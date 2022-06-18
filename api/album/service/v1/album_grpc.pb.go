@@ -25,6 +25,7 @@ type AlbumClient interface {
 	ListAlbum(ctx context.Context, in *ListAlbumReq, opts ...grpc.CallOption) (*ListAlbumReply, error)
 	GetAlbumById(ctx context.Context, in *GetAlbumByIdReq, opts ...grpc.CallOption) (*GetAlbumByIdReply, error)
 	CreateOrders(ctx context.Context, in *CreateOrdersReq, opts ...grpc.CallOption) (*CreateOrdersReply, error)
+	GetOrdersByUserId(ctx context.Context, in *GetOrdersByUserIdReq, opts ...grpc.CallOption) (*GetOrdersByUserReply, error)
 }
 
 type albumClient struct {
@@ -62,6 +63,15 @@ func (c *albumClient) CreateOrders(ctx context.Context, in *CreateOrdersReq, opt
 	return out, nil
 }
 
+func (c *albumClient) GetOrdersByUserId(ctx context.Context, in *GetOrdersByUserIdReq, opts ...grpc.CallOption) (*GetOrdersByUserReply, error) {
+	out := new(GetOrdersByUserReply)
+	err := c.cc.Invoke(ctx, "/Album/GetOrdersByUserId", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AlbumServer is the server API for Album service.
 // All implementations must embed UnimplementedAlbumServer
 // for forward compatibility
@@ -69,6 +79,7 @@ type AlbumServer interface {
 	ListAlbum(context.Context, *ListAlbumReq) (*ListAlbumReply, error)
 	GetAlbumById(context.Context, *GetAlbumByIdReq) (*GetAlbumByIdReply, error)
 	CreateOrders(context.Context, *CreateOrdersReq) (*CreateOrdersReply, error)
+	GetOrdersByUserId(context.Context, *GetOrdersByUserIdReq) (*GetOrdersByUserReply, error)
 	mustEmbedUnimplementedAlbumServer()
 }
 
@@ -84,6 +95,9 @@ func (UnimplementedAlbumServer) GetAlbumById(context.Context, *GetAlbumByIdReq) 
 }
 func (UnimplementedAlbumServer) CreateOrders(context.Context, *CreateOrdersReq) (*CreateOrdersReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateOrders not implemented")
+}
+func (UnimplementedAlbumServer) GetOrdersByUserId(context.Context, *GetOrdersByUserIdReq) (*GetOrdersByUserReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetOrdersByUserId not implemented")
 }
 func (UnimplementedAlbumServer) mustEmbedUnimplementedAlbumServer() {}
 
@@ -152,6 +166,24 @@ func _Album_CreateOrders_Handler(srv interface{}, ctx context.Context, dec func(
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Album_GetOrdersByUserId_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetOrdersByUserIdReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AlbumServer).GetOrdersByUserId(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/Album/GetOrdersByUserId",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AlbumServer).GetOrdersByUserId(ctx, req.(*GetOrdersByUserIdReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Album_ServiceDesc is the grpc.ServiceDesc for Album service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -170,6 +202,10 @@ var Album_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CreateOrders",
 			Handler:    _Album_CreateOrders_Handler,
+		},
+		{
+			MethodName: "GetOrdersByUserId",
+			Handler:    _Album_GetOrdersByUserId_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

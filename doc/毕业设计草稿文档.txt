@@ -58,7 +58,7 @@ app\album\task
 
 protoc --go_out=. --go_opt=paths=source_relative ^
     --go-grpc_out=. --go-grpc_opt=paths=source_relative ^
-    job.proto
+    album.proto
 
 protoc --go_out=. --go_opt=paths=source_relative \
     --go-grpc_out=. --go-grpc_opt=paths=source_relative \
@@ -88,8 +88,10 @@ VALUES
 《grpc服务》
 	album/service    addr: 0.0.0.0:8001	-> 主体的微服务 ,查专辑，查订单，下订单 等  
 	album/admin      addr: 0.0.0.0:8002	-> 运营管理后端服务 修改订单和专辑信息，并保存修改记录  
-	album/job 		 addr: 0.0.0.0:8003	-> 从kafka 中捞取订单，生成积分记录   
+	album/job 		 addr: 0.0.0.0:8003	-> 从kafka 中捞取订单，生成积分记录     
 	album/task 		 addr: 0.0.0.0:8004  -> 汇总计算 积分 
-	album/interface  addr: 0.0.0.0:8005 -> BFF 查用户的订单信息，和积分信息 
+	album/interface  addr: 0.0.0.0:8005 -> BFF 分别从 service 和task 查 用户的订单和积分数据，组合起来返回给调用者 
+
+	
 
 
