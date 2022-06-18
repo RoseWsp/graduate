@@ -1,11 +1,13 @@
+# 基于 kratos 微服务框架，而做的 album 商城项目 
+
 《项目要点》
 	- 微服务架构（BFF、Service、Admin、Job、Task 分模块）
-	- API 设计（包括 API 定义、错误码规范、Error 的使用）  error 错误使用 
+	- API 设计（包括 API 定义、错误码规范、Error 的使用）   
 	- gRPC 的使用		  
-	- Go 项目工程化（项目结构、DI、代码分层、ORM 框架） done 
+	- Go 项目工程化（项目结构、DI、代码分层、ORM 框架） 
 	- 并发的使用（errgroup 的并行链路请求）
-	- 微服务中间件的使用（ELK、Opentracing、Prometheus、Kafka） kafak 使用 
-	- 缓存的使用优化（一致性处理、Pipeline 优化） done  
+	- 微服务中间件的使用（ELK、Opentracing、Prometheus、Kafka）  
+	- 缓存的使用优化（一致性处理、Pipeline 优化） 
 
 《项目结构(album/service) 》
 app\album\service

@@ -27,6 +27,7 @@ func NewInterfaceRepo(data *Data, logger log.Logger) biz.InterfaceRepo {
 }
 
 func (r *interfaceRepo) GetOrdersAndIntegrating(ctx context.Context, req *v1.GetOrdersAndIntegratingReq) (*v1.GetOrdersAndIntegratingReply, error) {
+	// ps 这个获取订单的 接口是未真正实现了，这里偷懒了一下。哈哈
 	orders, err := r.data.client.albumClient.GetOrdersByUserId(ctx,
 		&serviceV1.GetOrdersByUserIdReq{
 			UserId: req.UserId,

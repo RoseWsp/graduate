@@ -3,12 +3,14 @@ package data
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"graduate/app/album/service/internal/biz"
 	"graduate/pkg/util/pagination"
 	"strconv"
 	"time"
 
 	"github.com/Shopify/sarama"
+	"github.com/go-kratos/kratos/v2/errors"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-redis/redis/v8"
 
@@ -52,7 +54,7 @@ func (r *albumRepo) GetAlbumById(ctx context.Context, id int64) (*biz.Album, err
 	}
 	album, err = r.getAlbumFromDB(ctx, id)
 	if err != nil {
-		return nil, err
+		return nil, errors.NotFound("ALBUM_NOT_FOUND", fmt.Sprintf("album:%d not found", id))
 	}
 	err = r.setAlbumToRedis(ctx, album)
 	if err != nil {
