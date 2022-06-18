@@ -22,7 +22,6 @@ type IntegratingCount struct {
 
 type Integrating struct {
 	gorm.Model
-	gen.DO
 	Id       int64
 	UserId   int64
 	OrderId  int64
@@ -67,4 +66,14 @@ func (t *taskRepo) IntegratingCount(ctx context.Context) error {
 	}
 	t.data.db.WithContext(ctx).Create(&integratings)
 	return nil
+}
+
+func (t *taskRepo) GetIntegrating(ctx context.Context, userId int64) (int64, error) {
+	var cnt IntegratingCount
+	cnt.UserId = userId
+	result := t.data.db.WithContext(ctx).First(&cnt)
+	if result.Error != nil {
+		return 0, result.Error
+	}
+	return cnt.Grade, nil
 }

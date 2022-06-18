@@ -23,6 +23,7 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type TaskClient interface {
 	IntegratingCount(ctx context.Context, in *IntegratingCountReq, opts ...grpc.CallOption) (*IntegratingCountReply, error)
+	GetIntegrating(ctx context.Context, in *GetIntegratingReq, opts ...grpc.CallOption) (*GetIntegratingReply, error)
 }
 
 type taskClient struct {
@@ -42,11 +43,21 @@ func (c *taskClient) IntegratingCount(ctx context.Context, in *IntegratingCountR
 	return out, nil
 }
 
+func (c *taskClient) GetIntegrating(ctx context.Context, in *GetIntegratingReq, opts ...grpc.CallOption) (*GetIntegratingReply, error) {
+	out := new(GetIntegratingReply)
+	err := c.cc.Invoke(ctx, "/Task/GetIntegrating", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // TaskServer is the server API for Task service.
 // All implementations must embed UnimplementedTaskServer
 // for forward compatibility
 type TaskServer interface {
 	IntegratingCount(context.Context, *IntegratingCountReq) (*IntegratingCountReply, error)
+	GetIntegrating(context.Context, *GetIntegratingReq) (*GetIntegratingReply, error)
 	mustEmbedUnimplementedTaskServer()
 }
 
@@ -56,6 +67,9 @@ type UnimplementedTaskServer struct {
 
 func (UnimplementedTaskServer) IntegratingCount(context.Context, *IntegratingCountReq) (*IntegratingCountReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method IntegratingCount not implemented")
+}
+func (UnimplementedTaskServer) GetIntegrating(context.Context, *GetIntegratingReq) (*GetIntegratingReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetIntegrating not implemented")
 }
 func (UnimplementedTaskServer) mustEmbedUnimplementedTaskServer() {}
 
@@ -88,6 +102,24 @@ func _Task_IntegratingCount_Handler(srv interface{}, ctx context.Context, dec fu
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Task_GetIntegrating_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetIntegratingReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TaskServer).GetIntegrating(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/Task/GetIntegrating",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TaskServer).GetIntegrating(ctx, req.(*GetIntegratingReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Task_ServiceDesc is the grpc.ServiceDesc for Task service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -98,6 +130,10 @@ var Task_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "IntegratingCount",
 			Handler:    _Task_IntegratingCount_Handler,
+		},
+		{
+			MethodName: "GetIntegrating",
+			Handler:    _Task_GetIntegrating_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
