@@ -1,6 +1,7 @@
 # 基于 kratos 微服务框架，而做的 album 商城项目 
 
-《项目要点》
+## 《项目要点》
+
 	- 微服务架构（BFF、Service、Admin、Job、Task 分模块）
 	- API 设计（包括 API 定义、错误码规范、Error 的使用）   
 	- gRPC 的使用		  
@@ -9,7 +10,8 @@
 	- 微服务中间件的使用（ELK、Opentracing、Prometheus、Kafka）  
 	- 缓存的使用优化（一致性处理、Pipeline 优化） 
 
-《项目结构(album/service) 》
+## 《项目结构(album/service) 》
+````
 app\album\service
 					\cmd
 						\server   
@@ -29,11 +31,12 @@ app\album\admin
 app\album\interface
 app\album\job
 app\album\task
+````
 
 
-
-《新建工程步骤 (album/service) 》
+## 《新建工程步骤 (album/service) 》
 ~工程，真是一个考验组织心力的活啊。~
+````
 1. 新建了 configs/configs.yaml 
 2. 新建了 conf/conf.proto 并 protoc 生成了 conf.pb.go 
 3. 新建了 api/album.proto 并 protoc album_grpc.pb.go 和 album.pb.go 
@@ -55,7 +58,7 @@ app\album\task
 9. 编译 生成二进制文件 
 	cd D:\github.com\RoseWsp\graduate\app\album\service\cmd\server 
 	go build -ldflags "-X main.Version=1.0.0"
-
+````
 
 
 protoc --go_out=. --go_opt=paths=source_relative ^
@@ -76,7 +79,7 @@ VALUES
   
   
 
-《表设计》
+## 《表设计》
 	# albums 专辑表 
 
 	# orders 订单表 - 记录用户下单 ,订单表超简单，一个订单就买一张专辑。
@@ -87,13 +90,11 @@ VALUES
 
 	# operation  操作记录表，主要用在 admin 后台修改数据的流水信息，用于业务数据"对账"
 	
-《grpc服务》
+## 《grpc服务》
+````
 	album/service    addr: 0.0.0.0:8001	-> 主体的微服务 ,查专辑，查订单，下订单 等  
 	album/admin      addr: 0.0.0.0:8002	-> 运营管理后端服务 修改订单和专辑信息，并保存修改记录  
 	album/job 		 addr: 0.0.0.0:8003	-> 从kafka 中捞取订单，生成积分记录     
 	album/task 		 addr: 0.0.0.0:8004  -> 汇总计算 积分 
 	album/interface  addr: 0.0.0.0:8005 -> BFF 分别从 service 和task 查 用户的订单和积分数据，组合起来返回给调用者 
-
-	
-
-
+````
