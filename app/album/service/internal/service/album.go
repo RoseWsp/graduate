@@ -70,7 +70,7 @@ func (s *AlbumService) CreateOrders(ctx context.Context, req *v1.CreateOrdersReq
 		Price:    req.Orders.Price,
 		Receiver: req.Orders.Receiver,
 		Address:  req.Orders.Address,
-		Mobile:   req.Orders.Mobile
+		Mobile:   req.Orders.Mobile,
 	}
 	return &v1.CreateOrdersReply{}, s.ac.CreateOrders(ctx, &order)
 }

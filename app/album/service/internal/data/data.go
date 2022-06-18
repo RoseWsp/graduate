@@ -45,12 +45,13 @@ func NewRedis(conf *conf.Data) *redis.Client {
 }
 
 // NewData .
-func NewData(db *gorm.DB, rdb *redis.Client, logger log.Logger) (*Data, func(), error) {
+func NewData(db *gorm.DB, rdb *redis.Client, kp sarama.AsyncProducer, logger log.Logger) (*Data, func(), error) {
 	log := log.NewHelper(log.With(logger, "module", "album-service/data"))
 
 	d := &Data{
 		db:  db,
 		rdb: rdb,
+		kp:  kp,
 		log: log,
 	}
 	return d, func() {
