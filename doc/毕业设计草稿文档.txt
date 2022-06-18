@@ -1,15 +1,16 @@
-微服务架构（BFF、Service、Admin、Job、Task 分模块）
-API 设计（包括 API 定义、错误码规范、Error 的使用）  error 错误使用 
-gRPC 的使用		done 
-Go 项目工程化（项目结构、DI、代码分层、ORM 框架） done 
-并发的使用（errgroup 的并行链路请求）
-微服务中间件的使用（ELK、Opentracing、Prometheus、Kafka） kafak 使用 
-缓存的使用优化（一致性处理、Pipeline 优化） done  
+《项目要点》
+	- 微服务架构（BFF、Service、Admin、Job、Task 分模块）
+	- API 设计（包括 API 定义、错误码规范、Error 的使用）  error 错误使用 
+	- gRPC 的使用		done 
+	- Go 项目工程化（项目结构、DI、代码分层、ORM 框架） done 
+	- 并发的使用（errgroup 的并行链路请求）
+	- 微服务中间件的使用（ELK、Opentracing、Prometheus、Kafka） kafak 使用 
+	- 缓存的使用优化（一致性处理、Pipeline 优化） done  
 
-
+《项目结构(album/service) 》
 app\album\service
 					\cmd
-						\server  ??为啥都叫 server 
+						\server   
 							main.go
 							wire.go 
 							wire_gen.go 
@@ -27,9 +28,10 @@ app\album\interface
 app\album\job
 app\album\task
 
-工程，真是一个考验组织心力的活啊。 
 
-新建工程步骤 
+
+《新建工程步骤 (album/service) 》
+~工程，真是一个考验组织心力的活啊。~
 1. 新建了 configs/configs.yaml 
 2. 新建了 conf/conf.proto 并 protoc 生成了 conf.pb.go 
 3. 新建了 api/album.proto 并 protoc album_grpc.pb.go 和 album.pb.go 
@@ -47,29 +49,20 @@ app\album\task
 			AlbumUseCase-> NewAlbumService() -> AlbumService{包裹了一个AlbumUseCase对象} 
 			AlbumService & conf *conf.Server ->  NewGRPCServer()  -> *grpc.Server  
 			*grpc.Server  -> newApp() -> *kratos.App
-			
 			data *conf.Data,*conf.Server,logger log.Logger 
-			
 9. 编译 生成二进制文件 
 	cd D:\github.com\RoseWsp\graduate\app\album\service\cmd\server 
 	go build -ldflags "-X main.Version=1.0.0"
 
-我还不知道 这个 grpc error 如何使用  
 
 
 protoc --go_out=. --go_opt=paths=source_relative ^
     --go-grpc_out=. --go-grpc_opt=paths=source_relative ^
     job.proto
 
-
 protoc --go_out=. --go_opt=paths=source_relative \
     --go-grpc_out=. --go-grpc_opt=paths=source_relative \
     conf.proto
-	
-protoc --go_out=. --go_opt=paths=source_relative ^
-    --go-grpc_out=. --go-grpc_opt=paths=source_relative ^
-    album.proto
-	
 
 INSERT INTO albums
   (title, artist, price,create_at)
@@ -81,28 +74,22 @@ VALUES
   
   
 
-表结构设计 
+《表设计》
 	# albums 专辑表 
 
 	# orders 订单表 - 记录用户下单 ,订单表超简单，一个订单就买一张专辑。
 
-	# integrating_count 积分汇总，统计每个用户的积分总数 
-
 	# integrating  积分表- 用户下单赚积分  
 
+	# integrating_count 积分汇总，统计每个用户的积分总数 
+
 	# operation  操作记录表，主要用在 admin 后台修改数据的流水信息，用于业务数据"对账"
-		- 主要修改 专辑表和订单表 
 	
-# grpc服务 
-	album/service  addr: 0.0.0.0:8001	-> 主体的微服务 
-	album/admin     addr: 0.0.0.0:8002	-> 运营管理后端服务 修改订单和专辑信息，并保存修改记录  
-	album/job 		addr: 0.0.0.0:8003	-> 从kafka 中捞取订单，生成积分记录   
-	
-
-
+《grpc服务》
+	album/service    addr: 0.0.0.0:8001	-> 主体的微服务 ,查专辑，查订单，下订单 等  
+	album/admin      addr: 0.0.0.0:8002	-> 运营管理后端服务 修改订单和专辑信息，并保存修改记录  
+	album/job 		 addr: 0.0.0.0:8003	-> 从kafka 中捞取订单，生成积分记录   
+	album/task 		 addr: 0.0.0.0:8004  -> 汇总计算 积分 
 	album/interface  addr: 0.0.0.0:8005 -> BFF 查用户的订单信息，和积分信息 
-	
- 
 
 
- 

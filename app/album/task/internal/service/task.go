@@ -1,0 +1,28 @@
+package service
+
+import (
+	"context"
+	v1 "graduate/api/album/task/v1"
+	"graduate/app/album/task/internal/biz"
+
+	"github.com/go-kratos/kratos/v2/log"
+)
+
+type TaskService struct {
+	v1.UnimplementedTaskServer
+
+	ac  *biz.TaskUseCase
+	log *log.Helper
+}
+
+func NewTaskService(ac *biz.TaskUseCase, logger log.Logger) *TaskService {
+	return &TaskService{
+		ac:  ac,
+		log: log.NewHelper(log.With(logger, "module", "service/task")),
+	}
+
+}
+
+func (s *TaskService) IntegratingCount(ctx context.Context, req *v1.IntegratingCountReq) (*v1.IntegratingCountReply, error) {
+	return &v1.IntegratingCountReply{}, s.ac.IntegratingCount(ctx)
+}

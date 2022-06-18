@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+option go_package = "graduate/api/album/task/v1;v1"; 
+
+service Task {
+    rpc IntegratingCount(IntegratingCountReq) returns (IntegratingCountReply) {} 
+}
+
+message IntegratingCountReq{
+}
+
+message IntegratingCountReply {
+}
