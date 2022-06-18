@@ -1,7 +1,7 @@
 package data
 
 import (
-	"graduate/app/album/service/internal/conf"
+	"graduate/app/album/admin/internal/conf"
 
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/google/wire"
@@ -10,7 +10,7 @@ import (
 )
 
 // ProviderSet is data providers.
-var ProviderSet = wire.NewSet(NewData, NewDB, NewAlbumRepo)
+var ProviderSet = wire.NewSet(NewData, NewDB, NewAlbumRepo, NewOrdersRepo)
 
 type Data struct {
 	db  *gorm.DB
@@ -23,7 +23,7 @@ func NewDB(conf *conf.Data, logger log.Logger) *gorm.DB {
 	if err != nil {
 		log.Fatal("failed opening connection to mysql: %v", err)
 	}
-	if err := db.AutoMigrate(&Album{}); err != nil {
+	if err := db.AutoMigrate(&Album{}, &Integrating{}, &Orders{}); err != nil {
 		log.Fatal(err)
 	}
 	return db

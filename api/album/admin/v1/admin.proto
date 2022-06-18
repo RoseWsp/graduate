@@ -1,0 +1,43 @@
+syntax = "proto3";
+
+option go_package = "graduate/api/album/admin/v1;v1"; 
+
+service Admin {
+    rpc UpdateOrders(UpdateOrdersReq) returns (UpdateOrdersReply) {}
+    rpc UpdateAlbum(UpdateAlbumReq) returns (UpdateAlbumReply) {} 
+}
+ 
+message UpdateOrdersReq{
+    int64 user_id =1;
+    message Orders {
+        int64 id=1;
+        int64 user_id=2;
+        int64 album_id=3;
+        double price=4;
+        string  receiver =5;
+        string address=6;
+        string mobile=7;
+        string create_at=8;
+    }
+    Orders orders =2;
+}
+
+message UpdateOrdersReply {
+
+}
+
+message UpdateAlbumReq{
+    int64 user_id =1;
+    message Album {
+        int64 id =1;
+        string title=2;
+        string artist=3;
+        double price=4;
+        string create_at=5;
+    }
+    Album album =2;
+}
+
+message UpdateAlbumReply {
+
+}

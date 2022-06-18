@@ -22,7 +22,7 @@ type ListAlbum struct {
 }
 
 type AlbumRepo interface {
-	ListAlbum(ctx context.Context, pageNum, pageSiz int64) (ListAlbum, error)
+	UpdateAlbum(ctx context.Context, userId int64, album *Album) error
 }
 
 type AlbumUseCase struct {
@@ -37,6 +37,6 @@ func NewAlbumUseCase(repo AlbumRepo, logger log.Logger) *AlbumUseCase {
 	}
 }
 
-func (uc *AlbumUseCase) ListAlbum(ctx context.Context, pageNum, pageSize int64) (ListAlbum, error) {
-	return uc.repo.ListAlbum(ctx, pageNum, pageSize)
+func (uc *AlbumUseCase) UpdateAlbum(ctx context.Context, userId int64, album *Album) error {
+	return uc.repo.UpdateAlbum(ctx, userId, album)
 }

@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-option go_package = "graduate/api/album/service/v1;v1"; 
+option go_package = "graduate/api/album/admin/v1;v1"; 
 
 service Album {
     rpc ListAlbum(ListAlbumReq) returns (ListAlbumReply){}

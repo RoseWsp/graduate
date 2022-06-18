@@ -1,10 +1,10 @@
 微服务架构（BFF、Service、Admin、Job、Task 分模块）
-API 设计（包括 API 定义、错误码规范、Error 的使用）
+API 设计（包括 API 定义、错误码规范、Error 的使用）  error 错误使用 
 gRPC 的使用		done 
 Go 项目工程化（项目结构、DI、代码分层、ORM 框架） done 
 并发的使用（errgroup 的并行链路请求）
-微服务中间件的使用（ELK、Opentracing、Prometheus、Kafka）
-缓存的使用优化（一致性处理、Pipeline 优化）
+微服务中间件的使用（ELK、Opentracing、Prometheus、Kafka） kafak 使用 
+缓存的使用优化（一致性处理、Pipeline 优化） done  
 
 
 app\album\service
@@ -60,6 +60,11 @@ app\album\task
 protoc --go_out=. --go_opt=paths=source_relative ^
     --go-grpc_out=. --go-grpc_opt=paths=source_relative ^
     conf.proto
+
+
+protoc --go_out=. --go_opt=paths=source_relative \
+    --go-grpc_out=. --go-grpc_opt=paths=source_relative \
+    conf.proto
 	
 protoc --go_out=. --go_opt=paths=source_relative ^
     --go-grpc_out=. --go-grpc_opt=paths=source_relative ^
@@ -75,4 +80,25 @@ VALUES
   ('Sarah Vaughan', 'Sarah Vaughan', 34.98,now());
   
   
-  
+
+表结构设计 
+	# albums 专辑表 
+
+	# orders 订单表 - 记录用户下单 ,订单表超简单，一个订单就买一张专辑。
+
+	# order_report 订单报表 - 每月统计订单数量，总金额
+
+	# integrating  积分表- 用户下单赚积分  
+
+	# operation  操作记录表，主要用在 admin 后台修改数据的流水信息，用于业务数据"对账"
+		- 主要修改 专辑表和订单表 
+
+
+# grpc服务 
+	album/service  addr: 0.0.0.0:8001	-> 主体的微服务 
+	album/admin     addr: 0.0.0.0:8002	-> 修改订单和专辑信息，并保存修改记录  
+	album/interface  addr: 0.0.0.0:8003 -> BFF 查用户的订单信息，和订单报表信息  
+	
+ 
+
+
