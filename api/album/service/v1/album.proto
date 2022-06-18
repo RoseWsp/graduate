@@ -5,7 +5,26 @@ option go_package = "graduate/api/album/admin/v1;v1";
 service Album {
     rpc ListAlbum(ListAlbumReq) returns (ListAlbumReply){}
     rpc GetAlbumById(GetAlbumByIdReq) returns (GetAlbumByIdReply){}
+    rpc CreateOrders(CreateOrdersReq) returns (CreateOrdersReply){}
 }
+
+message CreateOrdersReq {
+    message Orders { 
+        int64 user_id=2;
+        int64 album_id=3;
+        double price=4;
+        string receiver =5;
+        string address=6;
+        string mobile=7;
+    }
+    Orders orders=1;
+}
+
+message CreateOrdersReply {
+
+}
+
+
  
 message GetAlbumByIdReq{
     int64 id =1;

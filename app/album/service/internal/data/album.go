@@ -8,6 +8,7 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/Shopify/sarama"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-redis/redis/v8"
 
@@ -121,4 +122,21 @@ func (r *albumRepo) ListAlbum(ctx context.Context, pageNum, pageSize int64) (biz
 		Albums: rv,
 		Count:  cnt,
 	}, nil
+}
+
+func (r *albumRepo) CreateOrders(ctx context.Context, orders *biz.Orders) error {
+	err := createOrders(ctx, orders, r.data.db)
+	if err != nil {
+		return err
+	}
+
+	b, err := json.Marshal(orders)
+	if err != nil {
+		return err
+	}
+	r.data.kp.Input() <- &sarama.ProducerMessage{
+		Topic: "integrating", // 发送订单 ，供 积分job 消费
+		Value: sarama.ByteEncoder(b),
+	}
+	return nil
 }

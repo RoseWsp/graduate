@@ -3,6 +3,7 @@ package data
 import (
 	"graduate/app/album/service/internal/conf"
 
+	"github.com/Shopify/sarama"
 	"github.com/go-kratos/kratos/v2/log"
 
 	"github.com/go-redis/redis/v8"
@@ -12,11 +13,12 @@ import (
 )
 
 // ProviderSet is data providers.
-var ProviderSet = wire.NewSet(NewData, NewDB, NewRedis, NewAlbumRepo)
+var ProviderSet = wire.NewSet(NewData, NewDB, NewRedis, NewAlbumRepo, NewKafkaProducer)
 
 type Data struct {
 	db  *gorm.DB
 	rdb *redis.Client
+	kp  sarama.AsyncProducer
 	log *log.Helper
 }
 
@@ -26,7 +28,7 @@ func NewDB(conf *conf.Data, logger log.Logger) *gorm.DB {
 	if err != nil {
 		log.Fatal("failed opening connection to mysql: %v", err)
 	}
-	if err := db.AutoMigrate(&Album{}); err != nil {
+	if err := db.AutoMigrate(&Album{}, &Orders{}); err != nil {
 		log.Fatal(err)
 	}
 
@@ -54,4 +56,13 @@ func NewData(db *gorm.DB, rdb *redis.Client, logger log.Logger) (*Data, func(), 
 	return d, func() {
 
 	}, nil
+}
+
+func NewKafkaProducer(conf *conf.Data) sarama.AsyncProducer {
+	c := sarama.NewConfig()
+	p, err := sarama.NewAsyncProducer(conf.Kafka.Addr, c)
+	if err != nil {
+		panic(err)
+	}
+	return p
 }

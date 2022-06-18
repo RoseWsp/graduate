@@ -8,11 +8,11 @@ package main
 import (
 	"github.com/go-kratos/kratos/v2"
 	"github.com/go-kratos/kratos/v2/log"
-	"graduate/app/album/service/internal/biz"
-	"graduate/app/album/service/internal/conf"
-	"graduate/app/album/service/internal/data"
-	"graduate/app/album/service/internal/server"
-	"graduate/app/album/service/internal/service"
+	"graduate/app/album/admin/internal/biz"
+	"graduate/app/album/admin/internal/conf"
+	"graduate/app/album/admin/internal/data"
+	"graduate/app/album/admin/internal/server"
+	"graduate/app/album/admin/internal/service"
 )
 
 // Injectors from wire.go:
@@ -25,8 +25,10 @@ func initApp(confData *conf.Data, confServer *conf.Server, logger log.Logger) (*
 	}
 	albumRepo := data.NewAlbumRepo(dataData, logger)
 	albumUseCase := biz.NewAlbumUseCase(albumRepo, logger)
-	albumService := service.NewAlbumService(albumUseCase, logger)
-	grpcServer := server.NewGRPCServer(confServer, logger, albumService)
+	ordersRepo := data.NewOrdersRepo(dataData, logger)
+	ordersUseCase := biz.NewOrdersUseCase(ordersRepo, logger)
+	adminService := service.NewAdminService(albumUseCase, ordersUseCase, logger)
+	grpcServer := server.NewGRPCServer(confServer, logger, adminService)
 	app := newApp(logger, grpcServer)
 	return app, func() {
 		cleanup()

@@ -2,7 +2,7 @@ package main
 
 import (
 	"flag"
-	"graduate/app/album/service/internal/conf"
+	"graduate/app/album/admin/internal/conf"
 
 	"os"
 
@@ -17,7 +17,7 @@ import (
 var (
 	flagconf string
 	id, _    = os.Hostname()
-	Name     = "graduate.album.service"
+	Name     = "graduate.album.amin"
 
 	// go build -ldflags "-X main.Version=x.y.z"
 	Version string

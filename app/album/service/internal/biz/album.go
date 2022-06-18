@@ -16,6 +16,17 @@ type Album struct {
 	CreateAt time.Time
 }
 
+// Domain Object
+type Orders struct {
+	Id       int64
+	UserId   int64
+	AlbumId  int64
+	Price    float64
+	Receiver string
+	Address  string
+	Mobile   string
+}
+
 type ListAlbum struct {
 	Count  int64
 	Albums []*Album
@@ -24,6 +35,7 @@ type ListAlbum struct {
 type AlbumRepo interface {
 	ListAlbum(ctx context.Context, pageNum, pageSiz int64) (ListAlbum, error)
 	GetAlbumById(ctx context.Context, id int64) (*Album, error)
+	CreateOrders(ctx context.Context, orders *Orders) error
 }
 
 type AlbumUseCase struct {
@@ -44,4 +56,8 @@ func (uc *AlbumUseCase) ListAlbum(ctx context.Context, pageNum, pageSize int64) 
 
 func (uc *AlbumUseCase) GetAlbumById(ctx context.Context, id int64) (*Album, error) {
 	return uc.repo.GetAlbumById(ctx, id)
+}
+
+func (uc *AlbumUseCase) CreateOrders(ctx context.Context, orders *Orders) error {
+	return uc.repo.CreateOrders(ctx, orders)
 }

@@ -3,11 +3,11 @@
 package main
 
 import (
-	"graduate/app/album/service/internal/biz"
-	"graduate/app/album/service/internal/conf"
-	"graduate/app/album/service/internal/data"
-	"graduate/app/album/service/internal/server"
-	"graduate/app/album/service/internal/service"
+	"graduate/app/album/admin/internal/biz"
+	"graduate/app/album/admin/internal/conf"
+	"graduate/app/album/admin/internal/data"
+	"graduate/app/album/admin/internal/server"
+	"graduate/app/album/admin/internal/service"
 
 	"github.com/go-kratos/kratos/v2/log"
 
